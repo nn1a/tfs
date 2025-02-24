@@ -63,12 +63,12 @@ build_temporary_tools() {
 	build_coreutils 2>&1 | tee $LOGS_DIR/build_coreutils.txt
 	build_diffutils 2>&1 | tee $LOGS_DIR/build_diffutils.txt
 	build_file 2>&1 | tee $LOGS_DIR/build_file.txt
-	build_findutils 2>&1 | tee build_findutils.txt
+	build_findutils 2>&1 | tee $LOGS_DIR/build_findutils.txt
 	build_gawk 2>&1 | tee $LOGS_DIR/build_gawk.txt
-	# error build_grep 2>&1 | tee build_grep.txt
+	# error build_grep 2>&1 | tee $LOGS_DIR/build_grep.txt
 	build_gzip 2>&1 | tee $LOGS_DIR/build_gzip.txt
 	build_make 2>&1 | tee $LOGS_DIR/build_make.txt
-	build_patch 2>&1 | tee build_patch.txt
+	build_patch 2>&1 | tee $LOGS_DIR/build_patch.txt
 	build_sed 2>&1 | tee $LOGS_DIR/build_sed.txt
 	build_tar 2>&1 | tee $LOGS_DIR/build_tar.txt
 	build_xz 2>&1 | tee $LOGS_DIR/build_xz.txt
@@ -129,6 +129,27 @@ build_backup() {
 	cd $LFS
 	tar -cJpf $HOME/lfs-temp-tools-arm64_32.tar.xz .
 }
+build_more() {
+	echo "build_more"
+	source $SCRIPT_DIR/_4_3_build_more.sh
+	build_autoconf 2>&1 | tee $LOGS_DIR/build_autoconf.txt
+	build_automake 2>&1 | tee $LOGS_DIR/build_automake.txt
+	build_libtool 2>&1 | tee $LOGS_DIR/build_libtool.txt
+	build_perl-gettext 2>&1 | tee $LOGS_DIR/build_perl-gettext.txt
+	build_help2man 2>&1 | tee $LOGS_DIR/build_help2man.txt
+	build_libxml2 2>&1 | tee $LOGS_DIR/build_libxml2.txt
+	build_openssl3 2>&1 | tee $LOGS_DIR/build_openssl3.txt
+	build_libtool 2>&1 | tee $LOGS_DIR/build_libtool.txt
+	build_zstd 2>&1 | tee $LOGS_DIR/build_zstd.txt
+	build_libarchive 2>&1 | tee $LOGS_DIR/build_libarchive.txt
+	build_attr 2>&1 | tee $LOGS_DIR/build_attr.txt
+	build_acl 2>&1 | tee $LOGS_DIR/build_acl.txt
+	build_flex 2>&1 | tee $LOGS_DIR/build_flex.txt
+	build_smack 2>&1 | tee $LOGS_DIR/build_smack.txt
+	build_bc 2>&1 | tee $LOGS_DIR/build_bc.txt
+	build_fdupes 2>&1 | tee $LOGS_DIR/build_fdupes.txt
+	build_libcap 2>&1 | tee $LOGS_DIR/build_libcap.txt
+}
 
 main() {
 	init_lfs_dirs
@@ -137,13 +158,14 @@ main() {
 	build_temporary_tools_toolchain
 	build_chroot
 	build_chroot_tools
+	build_more
 
 	build_clean
 
 }
 
 # check packages are installed
-#host_packages="bash binutils bison coreutils findutils gawk gcc grep gzip m4 perl make patch texinfo help2man xz-utils tar sed python3 autopoint autoconf automake libtool gettext"
+#host_packages="bash binutils bison coreutils findutils gawk gcc grep gzip m4 perl make patch texinfo help2man xz-utils tar sed python3 autopoint autoconf automake libtool gettext po4a"
 #echo "sudo apt install -y $pkg"
 
 main "$@"
