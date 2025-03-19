@@ -7,7 +7,7 @@ build_binutils_pass2() {
 	mkdir -p build
 	cd build
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	../configure \
+		../configure \
 		--prefix=/usr \
 		--build=$(../config.guess) \
 		--host=$LFS_TGT \
@@ -35,7 +35,7 @@ build_gcc_pass2() {
 	mkdir -p build
 	cd build
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	../configure \
+		../configure \
 		--build=$(../config.guess) \
 		--host=$LFS_TGT \
 		--target=$LFS_TGT \
@@ -58,4 +58,35 @@ build_gcc_pass2() {
 	make DESTDIR=$LFS install
 	ln -sv gcc $LFS/usr/bin/cc
 	cd ../..
+}
+
+build_cross_rpm() {
+	[ -d rpm ] || git clone "$VCS_SERVER_URL/platform/upstream/rpm" -b tizen_base --depth 1
+	cd rpm
+	clean_git $(pwd)
+	sed -i 's/AC_MSG_ERROR(\[missing required NSPR \/ NSS header])//g' configure.ac
+	rm -rf sqlite
+	tar xjf packaging/db-4.8.30.tar.bz2
+	ln -sfn db-4.8.30 db
+	chmod -R u+w db/*
+	rm -f rpmdb/db.h
+	patch -p0 <packaging/db-4.8.30-integration.dif
+	cp -a packaging/rpm-tizen_macros tizen_macros
+	rm -f m4/libtool.m4
+	rm -f m4/lt*.m4
+
+	./autogen.sh
+	./configure --prefix=$TFS/tools \
+		--disable-dependency-tracking \
+		--enable-lua \
+		--with-lua \
+		--enable-shared \
+		--disable-python \
+		--with-vendor=tizen \
+		--enable-zstd \
+		--with-crypto=openssl \
+		--with-rpmconfigdir=$TFS/tools/lib/rpm
+	make $MAKEFLAGS
+	make install
+	cd ..
 }

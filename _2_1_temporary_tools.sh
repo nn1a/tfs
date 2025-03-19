@@ -11,13 +11,13 @@ build_m4() {
 
 	autoreconf -fiv
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess) \
 		gl_cv_func_isnanl_works=yes \
-	    gl_cv_func_printf_directive_n=yes \
-	    ac_cv_sys_stack_overflow_works=yes \
-	    ac_cv_sys_xsi_stack_overflow_heuristic=yes
+		gl_cv_func_printf_directive_n=yes \
+		ac_cv_sys_stack_overflow_works=yes \
+		ac_cv_sys_xsi_stack_overflow_heuristic=yes
 
 	make $MAKEFLAGS
 	make DESTDIR=$LFS install
@@ -32,12 +32,12 @@ build_ncurses() {
 	mkdir -p build
 	pushd build
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	../configure AWK=gawk
+		../configure AWK=gawk
 	make -C include
 	make -C progs tic
 	popd
 	CFLAGS="$GLOBAL_CFLAGS -Wno-error=implicit-function-declaration" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(./config.guess) \
 		--mandir=/usr/share/man \
@@ -75,7 +75,7 @@ build_bash() {
 		--without-bash-malloc \
 		--disable-nls \
 		--enable-alias \
-		--enable-readline  \
+		--enable-readline \
 		--enable-history
 
 	# parallel build is make error, so use -j1
@@ -100,7 +100,7 @@ build_coreutils() {
 	# 	--build=$(build-aux/config.guess)
 	# make
 	# popd
-	
+
 	sed 's/SUBDIRS = lib src doc man po tests/SUBDIRS = lib src po tests/g' -i Makefile.in
 	sed 's/SUBDIRS = lib src doc man po tests/SUBDIRS = lib src po tests/g' -i Makefile.am
 
@@ -113,14 +113,14 @@ build_coreutils() {
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess) \
 		ac_cv_func_strcoll_works=yes \
-        ac_cv_func_working_mktime=yes \
-	
+		ac_cv_func_working_mktime=yes
+
 	make $MAKEFLAGS
 	make DESTDIR=$LFS install
 	mv -v $LFS/usr/bin/chroot $LFS/usr/sbin
-#	mkdir -pv $LFS/usr/share/man/man8
-#	mv -v $LFS/usr/share/man/man1/chroot.1 $LFS/usr/share/man/man8/chroot.8
-#	sed -i 's/"1"/"8"/' $LFS/usr/share/man/man8/chroot.8
+	#	mkdir -pv $LFS/usr/share/man/man8
+	#	mv -v $LFS/usr/share/man/man1/chroot.1 $LFS/usr/share/man/man8/chroot.8
+	#	sed -i 's/"1"/"8"/' $LFS/usr/share/man/man8/chroot.8
 	cd ..
 }
 
@@ -135,7 +135,7 @@ build_diffutils() {
 	fi
 	cd diffutils-3.11
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(./build-aux/config.guess) \
 		--disable-nls
@@ -165,7 +165,7 @@ build_file() {
 	make
 	popd
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure \
+		./configure \
 		--prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(./config.guess) \
@@ -189,13 +189,13 @@ build_findutils() {
 	clean_git $(pwd)
 
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--localstatedir=/var/lib/locate \
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess) \
 		ac_cv_func_strcoll_works=yes \
-        ac_cv_func_working_mktime=yes \
-	
+		ac_cv_func_working_mktime=yes
+
 	sed -i 's/char \*program_name;//g' find/find.c
 	sed -i 's/^int starting_desc;//g' find/find.c
 	sed -i 's/^const char \*program_name;//g' locate/code.c
@@ -221,11 +221,11 @@ build_gawk() {
 
 	autoreconf -fiv
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(./config.guess) \
 		--disable-man \
-        --disable-nls
+		--disable-nls
 
 	# parallel build is make error, so use -j1
 	make -j1
@@ -254,11 +254,11 @@ build_grep() {
 	sed -i 's/AUTOMAKE_OPTIONS = ..\/src\/ansi2knr/AUTOMAKE_OPTIONS = /g' lib/Makefile.am
 	sed -i 's/AUTOMAKE_OPTIONS = ansi2knr/AUTOMAKE_OPTIONS = /g' src/Makefile.am
 
- 	cp /usr/share/gettext/config.rpath .
+	cp /usr/share/gettext/config.rpath .
 	autoreconf -fiv
-	
+
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(./config.guess)
 	make $MAKEFLAGS
@@ -272,7 +272,7 @@ build_gzip() {
 	cd gzip
 	clean_git $(pwd)
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr --host=$LFS_TGT
+		./configure --prefix=/usr --host=$LFS_TGT
 	make $MAKEFLAGS
 	make DESTDIR=$LFS install
 	cd ..
@@ -284,7 +284,7 @@ build_make() {
 	cd make
 	clean_git $(pwd)
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--without-guile \
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess)
@@ -300,7 +300,7 @@ build_patch() {
 	clean_git $(pwd)
 	autoreconf -fiv
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess)
 	make $MAKEFLAGS
@@ -314,7 +314,7 @@ build_sed() {
 	cd sed
 	clean_git $(pwd)
 	CFLAGS="$GLOBAL_CFLAGS -Wno-error=implicit-function-declaration -Wno-error=builtin-declaration-mismatch" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(./build-aux/config.guess) \
 		--disable-nls
@@ -330,11 +330,11 @@ build_tar() {
 	cd tar
 	clean_git $(pwd)
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess) \
 		ac_cv_func_strcoll_works=yes \
-        ac_cv_func_working_mktime=yes \
+		ac_cv_func_working_mktime=yes
 
 	make $MAKEFLAGS
 	make DESTDIR=$LFS install
@@ -344,11 +344,11 @@ build_tar() {
 build_xz() {
 	echo "build_xz"
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	[ -d xz ] || git clone "$VCS_SERVER_URL/platform/upstream/xz" -b tizen_base --depth 1
+		[ -d xz ] || git clone "$VCS_SERVER_URL/platform/upstream/xz" -b tizen_base --depth 1
 	cd xz
 	clean_git $(pwd)
 	CFLAGS="$GLOBAL_CFLAGS" CXXFLAGS="$GLOBAL_CFLAGS" \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess) \
 		--disable-static \

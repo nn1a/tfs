@@ -80,6 +80,7 @@ build_temporary_tools_toolchain() {
 
 	build_binutils_pass2 2>&1 | tee $LOGS_DIR/build_binutils_pass2.txt
 	build_gcc_pass2 2>&1 | tee $LOGS_DIR/build_gcc_pass2.txt
+	# build_cross_rpm 2>&1 | tee $LOGS_DIR/build_gcc_pass2.txt
 }
 
 # 7. Entering Chroot and Building Additional Temporary Tools
@@ -109,7 +110,7 @@ build_chroot_tools() {
 	build_libffi 2>&1 | tee $LOGS_DIR/build_libffi.txt
 	build_util_linux 2>&1 | tee $LOGS_DIR/build_util_linux.txt
 	build_python3 2>&1 | tee $LOGS_DIR/build_python3.txt
-	# error build_texinfo 2>&1 | tee $LOGS_DIR/build_texinfo.txt
+	build_texinfo 2>&1 | tee $LOGS_DIR/build_texinfo.txt
 }
 
 build_clean() {
@@ -149,15 +150,18 @@ build_more() {
 	build_bc 2>&1 | tee $LOGS_DIR/build_bc.txt
 	build_fdupes 2>&1 | tee $LOGS_DIR/build_fdupes.txt
 	build_libcap 2>&1 | tee $LOGS_DIR/build_libcap.txt
+	build_sqlite 2>&1 | tee $LOGS_DIR/build_sqlite.txt
+	build_nspr 2>&1 | tee $LOGS_DIR/build_nspr.txt
+	build_nss 2>&1 | tee $LOGS_DIR/build_nss.txt
 }
 
 main() {
 	init_lfs_dirs
-	build_cross_toolchain
-	build_temporary_tools
-	build_temporary_tools_toolchain
-	build_chroot
-	build_chroot_tools
+	# build_cross_toolchain
+	# build_temporary_tools
+	# build_temporary_tools_toolchain
+	# build_chroot
+	# build_chroot_tools
 	build_more
 
 	build_clean
@@ -165,7 +169,7 @@ main() {
 }
 
 # check packages are installed
-#host_packages="bash binutils bison coreutils findutils gawk gcc grep gzip m4 perl make patch texinfo help2man xz-utils tar sed python3 autopoint autoconf automake libtool gettext po4a"
+#host_packages="bash binutils bison coreutils findutils gawk gcc grep gzip m4 perl make patch texinfo help2man xz-utils tar sed python3 autopoint autoconf automake libtool gettext po4a libpopt-dev libmagic-dev libarchive-dev liblua5.1-0-dev libzstd-dev"
 #echo "sudo apt install -y $pkg"
 
 main "$@"

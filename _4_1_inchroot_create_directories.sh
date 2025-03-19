@@ -5,18 +5,18 @@ chroot_out_change_owner() {
 
 #    Preparing Virtual Kernel File Systems
 chroot_out_make_dirs() {
-mkdir -pv $LFS/{dev,proc,sys,run}
+	mkdir -pv $LFS/{dev,proc,sys,run}
 
-mount -v --bind /dev $LFS/dev
-mount -vt devpts devpts -o gid=5,mode=0620 $LFS/dev/pts
-mount -vt proc proc $LFS/proc
-mount -vt sysfs sysfs $LFS/sys
-mount -vt tmpfs tmpfs $LFS/run
-if [ -h $LFS/dev/shm ]; then
-	install -v -d -m 1777 $LFS$(realpath /dev/shm)
-else
-	mount -vt tmpfs -o nosuid,nodev tmpfs $LFS/dev/shm
-fi
+	mount -v --bind /dev $LFS/dev
+	mount -vt devpts devpts -o gid=5,mode=0620 $LFS/dev/pts
+	mount -vt proc proc $LFS/proc
+	mount -vt sysfs sysfs $LFS/sys
+	mount -vt tmpfs tmpfs $LFS/run
+	if [ -h $LFS/dev/shm ]; then
+		install -v -d -m 1777 $LFS$(realpath /dev/shm)
+	else
+		mount -vt tmpfs -o nosuid,nodev tmpfs $LFS/dev/shm
+	fi
 
 }
 
@@ -33,37 +33,37 @@ chroot_enter() {
 }
 
 chroot_in_create_dirs() {
-#    Creating Directories
-mkdir -pv /{boot,home,mnt,opt,srv}
+	#    Creating Directories
+	mkdir -pv /{boot,home,mnt,opt,srv}
 
-mkdir -pv /etc/{opt,sysconfig}
-mkdir -pv /lib/firmware
-mkdir -pv /media/{floppy,cdrom}
-mkdir -pv /usr/{,local/}{include,src}
-mkdir -pv /usr/lib/locale
-mkdir -pv /usr/local/{bin,lib,sbin}
-mkdir -pv /usr/{,local/}share/{color,dict,doc,info,locale,man}
-mkdir -pv /usr/{,local/}share/{misc,terminfo,zoneinfo}
-mkdir -pv /usr/{,local/}share/man/man{1..8}
-mkdir -pv /var/{cache,local,log,mail,opt,spool}
-mkdir -pv /var/lib/{color,misc,locate}
+	mkdir -pv /etc/{opt,sysconfig}
+	mkdir -pv /lib/firmware
+	mkdir -pv /media/{floppy,cdrom}
+	mkdir -pv /usr/{,local/}{include,src}
+	mkdir -pv /usr/lib/locale
+	mkdir -pv /usr/local/{bin,lib,sbin}
+	mkdir -pv /usr/{,local/}share/{color,dict,doc,info,locale,man}
+	mkdir -pv /usr/{,local/}share/{misc,terminfo,zoneinfo}
+	mkdir -pv /usr/{,local/}share/man/man{1..8}
+	mkdir -pv /var/{cache,local,log,mail,opt,spool}
+	mkdir -pv /var/lib/{color,misc,locate}
 
-ln -sfv /run /var/run
-ln -sfv /run/lock /var/lock
+	ln -sfv /run /var/run
+	ln -sfv /run/lock /var/lock
 
-install -dv -m 0750 /root
-install -dv -m 1777 /tmp /var/tmp
+	install -dv -m 0750 /root
+	install -dv -m 1777 /tmp /var/tmp
 }
 
 chroot_in_create_files() {
-#    Creating Essential Files and Symlinks
-ln -sv /proc/self/mounts /etc/mtab
-cat >/etc/hosts <<EOF
+	#    Creating Essential Files and Symlinks
+	ln -sv /proc/self/mounts /etc/mtab
+	cat >/etc/hosts <<EOF
 127.0.0.1  localhost $(hostname)
 ::1        localhost
 EOF
 
-cat >/etc/passwd <<"EOF"
+	cat >/etc/passwd <<"EOF"
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/dev/null:/usr/bin/false
 daemon:x:6:6:Daemon User:/dev/null:/usr/bin/false
@@ -72,7 +72,7 @@ uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/usr/bin/false
 nobody:x:65534:65534:Unprivileged User:/dev/null:/usr/bin/false
 EOF
 
-cat >/etc/group <<"EOF"
+	cat >/etc/group <<"EOF"
 root:x:0:
 bin:x:1:daemon
 sys:x:2:
@@ -99,14 +99,14 @@ users:x:999:
 nogroup:x:65534:
 EOF
 
-echo "tester:x:101:101::/home/tester:/bin/bash" >>/etc/passwd
-echo "tester:x:101:" >>/etc/group
-install -o tester -d /home/tester
+	echo "tester:x:101:101::/home/tester:/bin/bash" >>/etc/passwd
+	echo "tester:x:101:" >>/etc/group
+	install -o tester -d /home/tester
 
-exec /usr/bin/bash --login
+	exec /usr/bin/bash --login
 
-touch /var/log/{btmp,lastlog,faillog,wtmp}
-chgrp -v utmp /var/log/lastlog
-chmod -v 664 /var/log/lastlog
-chmod -v 600 /var/log/btmp
+	touch /var/log/{btmp,lastlog,faillog,wtmp}
+	chgrp -v utmp /var/log/lastlog
+	chmod -v 664 /var/log/lastlog
+	chmod -v 600 /var/log/btmp
 }

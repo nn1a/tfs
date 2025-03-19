@@ -1,5 +1,4 @@
 # 7. Entering Chroot and Building Additional Temporary Tools
-
 build_gettext() {
 	[ -d gettext ] || git clone "$VCS_SERVER_URL/platform/upstream/gettext" -b tizen_base --depth 1
 	cd gettext
@@ -9,9 +8,10 @@ build_gettext() {
 		--host=$LFS_TGT \
 		--build=$(./build-aux/config.guess) \
 		--disable-static \
-        --enable-shared
+		--enable-shared
 
 	make $MAKEFLAGS
+	make DESTDIR=$LFS install
 	cp -v gettext-tools/src/{msgfmt,msgmerge,xgettext} $LFS/usr/bin
 	cd ..
 }
@@ -32,13 +32,13 @@ build_bison() {
 
 build_perl() {
 	[ -d perl ] || git clone "$VCS_SERVER_URL/platform/upstream/perl" -b tizen_base --depth 1
-	[ -f perl-cross-1.6.1.tar.gz ] || \
+	[ -f perl-cross-1.6.1.tar.gz ] ||
 		curl -L -O https://github.com/arsv/perl-cross/releases/download/1.6.1/perl-cross-1.6.1.tar.gz
 	cd perl
 	clean_git $(pwd)
 
 	[ -f configure ] || tar --strip-components=1 -xf ../perl-cross-1.6.1.tar.gz
-	./configure  \
+	./configure \
 		--prefix=/usr \
 		--target=$LFS_TGT \
 		-Dprefix=/usr \
@@ -52,19 +52,19 @@ build_perl() {
 		-Dvendorarch=/usr/lib/perl5/5.38/vendor_perl \
 		-Dman1dir=/usr/share/man/man1 \
 		-Dman3dir=/usr/share/man/man3 \
-		-Accflags='-DPERL_USE_SAFE_PUTENV' \
-		
+		-Accflags='-DPERL_USE_SAFE_PUTENV'
+
 	make $MAKEFLAGS
 	make DESTDIR=$LFS install
 	cd ..
 }
 
-build_zlib () {
+build_zlib() {
 	[ -d zlib ] || git clone "$VCS_SERVER_URL/platform/upstream/zlib" -b tizen_base --depth 1
 	cd zlib
 	clean_git $(pwd)
 	CROSS_PREFIX=$LFS_TGT- \
-	./configure --prefix=/usr \
+		./configure --prefix=/usr \
 		--shared
 
 	make $MAKEFLAGS
@@ -89,7 +89,6 @@ build_libffi() {
 	cd ..
 }
 
-
 build_util_linux() {
 	[ -d util-linux ] || git clone "$VCS_SERVER_URL/platform/upstream/util-linux" -b tizen_base --depth 1
 	cd util-linux
@@ -97,7 +96,7 @@ build_util_linux() {
 	GTKDOCIZE="echo" autoreconf -fi
 
 	CFLAGS="$GLOBAL_CFLAGS -Wno-error=implicit-function-declaration -DHAVE_MOUNT_SETATTR" \
-	./configure \
+		./configure \
 		--host=$LFS_TGT \
 		--prefix=/usr \
 		--libdir=/usr/lib \
@@ -124,7 +123,6 @@ build_util_linux() {
 	make DESTDIR=$LFS install
 	cd ..
 }
-
 
 build_python3() {
 	[ -d python3 ] || git clone "$VCS_SERVER_URL/platform/upstream/python3" -b tizen_base --depth 1
@@ -167,19 +165,34 @@ build_python3() {
 	cd ..
 }
 
+build_cross_help2man() {
+	[ -d help2man ] || git clone "$VCS_SERVER_URL/platform/upstream/help2man" -b tizen_base --depth 1
+	cd help2man
+	clean_git $(pwd)
+	autoreconf -fiv
+	./configure --prefix=$LFS/tools
+
+	make $MAKEFLAGS
+	make install
+	cd ..
+}
 build_texinfo() {
 	[ -d texinfo ] || git clone "$VCS_SERVER_URL/platform/upstream/texinfo" -b tizen_base --depth 1
 	cd texinfo
-	clean_git $(pwd)
+	# clean_git $(pwd)
 	AUTOPOINT=true autoreconf -fi
+
 	./configure \
 		--prefix=/usr \
 		--host=$LFS_TGT \
 		--build=$(build-aux/config.guess) \
 		--disable-perl-xs \
-		--enable-nls
+		--enable-nls \
+		--disable-man \
+		texinfo_cv_sys_iconv_converts_euc_cn=no
 
 	make $MAKEFLAGS
+	exit 1
 	make DESTDIR=$LFS install
 	cd ..
 }
